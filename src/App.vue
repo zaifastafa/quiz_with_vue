@@ -1,28 +1,74 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div id="app">
+        <Header
+                :numCorrect="correctAnswers"
+                :numTotal="numTotal"
+        />
+        <b-container>
+            <b-row>
+                <b-col sm="6" offset="3">
+                    <QuestionBox
+                            v-if="questions.length"
+                            :currentQuestion="questions[index]"
+                            :next="next"
+                            :increment="increment"
+                    />
+                </b-col>
+            </b-row>
+        </b-container>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+    import Header from './components/Header.vue'
+    import QuestionBox from './components/QuestionBox.vue'
 
-export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
-}
+    export default {
+        name: 'app',
+        components: {
+            Header,
+            QuestionBox
+        },
+        data() {
+            return {
+                questions: [],
+                index: 0,
+                correctAnswers: 0,
+                numTotal: 0
+            }
+        },
+        methods: {
+            next() {
+                this.index++
+            },
+            increment(isCorrect) {
+                if (isCorrect) {
+                    this.correctAnswers++;
+                }
+                this.numTotal++
+            }
+        },
+        mounted() {
+            fetch('https://opentdb.com/api.php?amount=50&category=9&type=multiple', {
+                method: 'get'
+            })
+                .then((response) => {
+                    return response.json()
+                })
+                .then((jsonData) => {
+                    this.questions = jsonData.results;
+                })
+        }
+    }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+    #app {
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 60px;
+    }
 </style>
