@@ -3,7 +3,7 @@
         <b-jumbotron>
 
             <template slot="lead">
-                {{ currentQuestion.question }}
+                {{ decoder(currentQuestion.question) }}
             </template>
 
             <hr class="my-4">
@@ -15,7 +15,7 @@
                         @click="selectAnswer(index)"
                         :class="[answerClass(index)]"
                 >
-                    {{ answer }}
+                    {{ decoder(answer) }}
                 </b-list-group-item>
             </b-list-group>
 
@@ -69,6 +69,11 @@
             }
         },
         methods: {
+            decoder(str) {
+                const textArea = document.createElement('textarea');
+                textArea.innerHTML = str;
+                return textArea.value;
+            },
             selectAnswer(index) {
                 if (!this.answered)
                     this.selectedIndex = index;
